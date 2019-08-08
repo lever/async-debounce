@@ -7,15 +7,22 @@ function debounce(fn, interval) {
   var running = false;
   var nextArgs;
   
+  function done() {
+    running = false;
+    if (nextArgs) {
+      run(nextArgs);
+      nextArgs = null;
+    }
+  }
+  
+  function run(args) {
+    fn.apply(null, args);
+    running = true;
+  }
+  
   return function() {
     var args = slice.call(arguments);
-    args.push(function() {
-      running = false;
-      if (nextArgs) {
-        run(nextArgs);
-        nextArgs = null;
-      }
-    });
+    args.push(done);
     
     if (running) return nextArgs = args;
     if (timeout) clearTimeout(timeout);
@@ -24,10 +31,5 @@ function debounce(fn, interval) {
       run(args);
       timeout = null;
     }, interval);
-    
-    function run(args) {
-      fn.apply(null, args);
-      running = true;
-    }
   }
 }
