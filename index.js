@@ -9,15 +9,16 @@ function debounce(fn, interval) {
   
   function done() {
     running = false;
-    if (nextArgs) {
-      run(nextArgs);
+    var args = nextArgs;
+    if (args) {
       nextArgs = null;
+      run(args);
     }
   }
   
   function run(args) {
-    fn.apply(null, args);
     running = true;
+    fn.apply(null, args);
   }
   
   return function() {
@@ -28,8 +29,8 @@ function debounce(fn, interval) {
     if (timeout) clearTimeout(timeout);
     
     timeout = setTimeout(function() {
-      run(args);
       timeout = null;
+      run(args);
     }, interval);
   }
 }
